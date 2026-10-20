@@ -6,11 +6,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class UsuarioDTO {
-    private Long id;
+    private Integer id_usuario;
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 100, message = "El nombre no puede superar 100 caracteres")
     private String nombre;
+
+    @NotBlank(message = "El nombre de usuario es obligatorio")
+    @Size(max = 100, message = "El nombre de usuario no puede superar 100 caracteres")
+    private String userName;
 
     @NotBlank(message = "El email es obligatorio")
     @Email(message = "El email no tiene un formato válido")
@@ -24,19 +28,20 @@ public class UsuarioDTO {
     public UsuarioDTO() {
     }
 
-    public UsuarioDTO(Long id, String nombre, String email, String password) {
-        this.id = id;
+    public UsuarioDTO(Integer id_usuario, String nombre, String userName, String email, String password) {
+        this.id_usuario = id_usuario;
         this.nombre = nombre;
+        this.userName = userName;
         this.email = email;
         this.password = password;
     }
 
-    public Long getId() {
-        return id;
+    public Integer getId() {
+        return id_usuario;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Integer id_usuario) {
+        this.id_usuario = id_usuario;
     }
 
     public String getNombre() {
@@ -53,6 +58,14 @@ public class UsuarioDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getPassword() {

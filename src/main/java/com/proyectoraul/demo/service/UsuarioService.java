@@ -9,9 +9,9 @@ public interface UsuarioService {
 
     List<UsuarioDTO> listar();
 
-    UsuarioDTO buscarPorId(Long id);
+    UsuarioDTO buscarPorId(Integer id_usuario);
 
-    UsuarioDTO actualizar(Long id, UsuarioDTO dto);
+    UsuarioDTO actualizar(Integer id_usuario, UsuarioDTO dto);
 
-    void eliminar(Long id);
+    void eliminar(Integer id_usuario);
 }

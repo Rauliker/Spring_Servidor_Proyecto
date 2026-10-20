@@ -14,10 +14,14 @@ import jakarta.persistence.UniqueConstraint;
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id_usuario")
+    private Integer id_usuario;
 
     @Column(nullable = false, length = 100)
     private String nombre;
+
+    @Column(nullable = false, length = 100)
+    private String userName;
 
     @Column(nullable = false, length = 150, unique = true)
     private String email;
@@ -28,19 +32,20 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(Long id, String nombre, String email, String password) {
-        this.id = id;
+    public Usuario(Integer id_usuario, String nombre, String userName, String email, String password) {
+        this.id_usuario = id_usuario;
         this.nombre = nombre;
+        this.userName = userName;
         this.email = email;
         this.password = password;
     }
 
-    public Long getId() {
-        return id;
+    public Integer getId() {
+        return id_usuario;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Integer id_usuario) {
+        this.id_usuario = id_usuario;
     }
 
     public String getNombre() {
@@ -49,6 +54,14 @@ public class Usuario {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public String getEmail() {

@@ -13,58 +13,93 @@ import com.proyectoraul.demo.model.Usuario;
 import com.proyectoraul.demo.repository.UsuarioRepository;
 
 @Service
-@Transactional
 public class UsuarioServiceImpl implements UsuarioService {
+
     private final UsuarioRepository repository;
     private final UsuarioMapper mapper;
 
-    public UsuarioServiceImpl(UsuarioRepository repository, UsuarioMapper mapper) {
+    public UsuarioServiceImpl(
+            UsuarioRepository repository,
+            UsuarioMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
 
     @Override
+    @Transactional
     public UsuarioDTO crear(UsuarioDTO dto) {
+
         if (repository.existsByEmail(dto.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un usuario con ese email");
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Ya existe un usuario con ese email");
         }
+
         Usuario usuario = mapper.toEntity(dto);
+
+        // el ID lo genera PostgreSQL
         usuario.setId(null);
-        return mapper.toDTO(repository.save(usuario));
+
+        // guarda el usuario en la base de datos
+        Usuario guardado = repository.save(usuario);
+
+        // devuelve el usuario guardado, con su ID
+        return mapper.toDTO(guardado);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<UsuarioDTO> listar() {
-        return repository.findAll().stream().map(mapper::toDTO).toList();
+        return repository.listarUsuarios()
+                .stream()
+                .map(mapper::toDTO)
+                .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public UsuarioDTO buscarPorId(Long id) {
-        return mapper.toDTO(obtenerUsuario(id));
+    public UsuarioDTO buscarPorId(Integer id_usuario) {
+        Usuario usuario = repository.buscarPorIdSQL(id_usuario)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        return mapper.toDTO(usuario);
     }
 
     @Override
-    public UsuarioDTO actualizar(Long id, UsuarioDTO dto) {
-        Usuario existente = obtenerUsuario(id);
-        repository.findByEmail(dto.getEmail()).ifPresent(otro -> {
-            if (!otro.getId().equals(id)) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "Ese email ya pertenece a otro usuario");
+    @Transactional
+    public UsuarioDTO actualizar(Integer id_usuario, UsuarioDTO dto) {
+        Usuario existente = repository.buscarPorIdSQL(id_usuario)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        repository.buscarPorEmailSQL(dto.getEmail()).ifPresent(otro -> {
+            if (!otro.getId().equals(id_usuario)) {
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT, "El email ya existe");
             }
         });
-        mapper.updateEntity(existente, dto);
-        return mapper.toDTO(repository.save(existente));
+
+        int filas = repository.actualizarUsuario(
+                id_usuario, dto.getNombre(), dto.getEmail(), dto.getUserName(), dto.getPassword());
+
+        if (filas == 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Usuario no encontrado");
+        }
+
+        return mapper.toDTO(
+                repository.buscarPorIdSQL(id_usuario).orElseThrow());
     }
 
     @Override
-    public void eliminar(Long id) {
-        Usuario usuario = obtenerUsuario(id);
-        repository.delete(usuario);
-    }
+    @Transactional
+    public void eliminar(Integer id_usuario) {
+        int filas = repository.eliminarUsuario(id_usuario);
 
-    private Usuario obtenerUsuario(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado: " + id));
+        if (filas == 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Usuario no encontrado");
+        }
     }
 }
