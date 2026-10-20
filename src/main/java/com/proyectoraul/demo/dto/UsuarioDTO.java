@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class UsuarioDTO {
-    private Integer id_usuario;
+    private Integer IdUsuario;
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 100, message = "El nombre no puede superar 100 caracteres")
@@ -21,15 +21,15 @@ public class UsuarioDTO {
     @Size(max = 150, message = "El email no puede superar 150 caracteres")
     private String email;
 
-    @NotNull(message = "La edad es obligatoria")
+    @NotNull(message = "La contraseña es obligatoria")
     @Size(min = 8, message = "Hay que poner una contraseña con el menos 8 caracteres")
     private String password;
 
     public UsuarioDTO() {
     }
 
-    public UsuarioDTO(Integer id_usuario, String nombre, String userName, String email, String password) {
-        this.id_usuario = id_usuario;
+    public UsuarioDTO(Integer IdUsuario, String nombre, String userName, String email, String password) {
+        this.IdUsuario = IdUsuario;
         this.nombre = nombre;
         this.userName = userName;
         this.email = email;
@@ -37,11 +37,11 @@ public class UsuarioDTO {
     }
 
     public Integer getIdUsuario() {
-        return id_usuario;
+        return IdUsuario;
     }
 
-    public void setIdUsuario(Integer id_usuario) {
-        this.id_usuario = id_usuario;
+    public void setIdUsuario(Integer IdUsuario) {
+        this.IdUsuario = IdUsuario;
     }
 
     public String getNombre() {

@@ -15,25 +15,25 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
-    private Integer id_usuario;
+    private Integer idUsuario;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "\"userName\"", nullable = false, length = 100)
     private String userName;
 
-    @Column(nullable = false, length = 150, unique = true)
+    @Column(name = "email", nullable = false, length = 150, unique = true)
     private String email;
 
-    @Column(nullable = false, length = 150)
+    @Column(name = "password", nullable = false, length = 150)
     private String password;
 
     public Usuario() {
     }
 
-    public Usuario(Integer id_usuario, String nombre, String userName, String email, String password) {
-        this.id_usuario = id_usuario;
+    public Usuario(Integer idUsuario, String nombre, String userName, String email, String password) {
+        this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.userName = userName;
         this.email = email;
@@ -41,11 +41,11 @@ public class Usuario {
     }
 
     public Integer getIdUsuario() {
-        return id_usuario;
+        return idUsuario;
     }
 
-    public void setIdUsuario(Integer id_usuario) {
-        this.id_usuario = id_usuario;
+    public void setIdUsuario(Integer idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public String getNombre() {

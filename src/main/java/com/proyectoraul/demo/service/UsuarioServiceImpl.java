@@ -58,8 +58,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional(readOnly = true)
-    public UsuarioDTO buscarPorIdUsuario(Integer id_usuario) {
-        Usuario usuario = repository.buscarPorIdUsuarioSQL(id_usuario)
+    public UsuarioDTO buscarPorIdUsuario(Integer IdUsuario) {
+        Usuario usuario = repository.buscarPorIdUsuarioSQL(IdUsuario)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
@@ -68,20 +68,24 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public UsuarioDTO actualizar(Integer id_usuario, UsuarioDTO dto) {
-        Usuario existente = repository.buscarPorIdUsuarioSQL(id_usuario)
+    public UsuarioDTO actualizar(Integer IdUsuario, UsuarioDTO dto) {
+        Usuario existente = repository.buscarPorIdUsuarioSQL(IdUsuario)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
         repository.buscarPorEmailSQL(dto.getEmail()).ifPresent(otro -> {
-            if (!otro.getIdUsuario().equals(id_usuario)) {
+            if (!otro.getIdUsuario().equals(IdUsuario)) {
                 throw new ResponseStatusException(
                         HttpStatus.CONFLICT, "El email ya existe");
             }
         });
 
         int filas = repository.actualizarUsuario(
-                id_usuario, dto.getNombre(), dto.getEmail(), dto.getUserName(), dto.getPassword());
+                IdUsuario,
+                dto.getNombre(),
+                dto.getUserName(),
+                dto.getEmail(),
+                dto.getPassword());
 
         if (filas == 0) {
             throw new ResponseStatusException(
@@ -89,13 +93,13 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
 
         return mapper.toDTO(
-                repository.buscarPorIdUsuarioSQL(id_usuario).orElseThrow());
+                repository.buscarPorIdUsuarioSQL(IdUsuario).orElseThrow());
     }
 
     @Override
     @Transactional
-    public void eliminar(Integer id_usuario) {
-        int filas = repository.eliminarUsuario(id_usuario);
+    public void eliminar(Integer IdUsuario) {
+        int filas = repository.eliminarUsuario(IdUsuario);
 
         if (filas == 0) {
             throw new ResponseStatusException(

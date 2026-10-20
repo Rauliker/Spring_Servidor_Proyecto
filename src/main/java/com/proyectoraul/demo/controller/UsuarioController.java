@@ -38,19 +38,19 @@ public class UsuarioController {
         return service.listar();
     }
 
-    @GetMapping("/{id_usuario}")
-    public UsuarioDTO buscarPorIdUsuario(@PathVariable Integer id_usuario) {
-        return service.buscarPorIdUsuario(id_usuario);
+    @GetMapping("/{IdUsuario}")
+    public UsuarioDTO buscarPorIdUsuario(@PathVariable Integer IdUsuario) {
+        return service.buscarPorIdUsuario(IdUsuario);
     }
 
-    @PutMapping("/{id_usuario}")
-    public UsuarioDTO actualizar(@PathVariable Integer id_usuario, @Valid @RequestBody UsuarioDTO dto) {
-        return service.actualizar(id_usuario, dto);
+    @PutMapping("/{IdUsuario}")
+    public UsuarioDTO actualizar(@PathVariable Integer IdUsuario, @Valid @RequestBody UsuarioDTO dto) {
+        return service.actualizar(IdUsuario, dto);
     }
 
-    @DeleteMapping("/{id_usuario}")
+    @DeleteMapping("/{IdUsuario}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void eliminar(@PathVariable Integer id_usuario) {
-        service.eliminar(id_usuario);
+    public void eliminar(@PathVariable Integer IdUsuario) {
+        service.eliminar(IdUsuario);
     }
 }
