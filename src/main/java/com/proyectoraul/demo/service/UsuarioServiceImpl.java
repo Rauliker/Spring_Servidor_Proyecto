@@ -38,7 +38,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = mapper.toEntity(dto);
 
         // el ID lo genera PostgreSQL
-        usuario.setId(null);
+        usuario.setIdUsuario(null);
 
         // guarda el usuario en la base de datos
         Usuario guardado = repository.save(usuario);
@@ -58,8 +58,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional(readOnly = true)
-    public UsuarioDTO buscarPorId(Integer id_usuario) {
-        Usuario usuario = repository.buscarPorIdSQL(id_usuario)
+    public UsuarioDTO buscarPorIdUsuario(Integer id_usuario) {
+        Usuario usuario = repository.buscarPorIdUsuarioSQL(id_usuario)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
@@ -69,12 +69,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public UsuarioDTO actualizar(Integer id_usuario, UsuarioDTO dto) {
-        Usuario existente = repository.buscarPorIdSQL(id_usuario)
+        Usuario existente = repository.buscarPorIdUsuarioSQL(id_usuario)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
         repository.buscarPorEmailSQL(dto.getEmail()).ifPresent(otro -> {
-            if (!otro.getId().equals(id_usuario)) {
+            if (!otro.getIdUsuario().equals(id_usuario)) {
                 throw new ResponseStatusException(
                         HttpStatus.CONFLICT, "El email ya existe");
             }
@@ -89,7 +89,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
 
         return mapper.toDTO(
-                repository.buscarPorIdSQL(id_usuario).orElseThrow());
+                repository.buscarPorIdUsuarioSQL(id_usuario).orElseThrow());
     }
 
     @Override

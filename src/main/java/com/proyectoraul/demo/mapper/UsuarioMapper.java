@@ -9,11 +9,12 @@ import com.proyectoraul.demo.model.Usuario;
 public class UsuarioMapper {
     public UsuarioDTO toDTO(Usuario usuario) {
         return new UsuarioDTO(
-                usuario.getId(), usuario.getNombre(), usuario.getEmail(), usuario.getUserName(), usuario.getPassword());
+                usuario.getIdUsuario(), usuario.getNombre(), usuario.getEmail(), usuario.getUserName(),
+                usuario.getPassword());
     }
 
     public Usuario toEntity(UsuarioDTO dto) {
-        return new Usuario(dto.getId(), dto.getNombre(), dto.getEmail(), dto.getUserName(), dto.getPassword());
+        return new Usuario(dto.getIdUsuario(), dto.getNombre(), dto.getEmail(), dto.getUserName(), dto.getPassword());
     }
 
     public void updateEntity(Usuario usuario, UsuarioDTO dto) {

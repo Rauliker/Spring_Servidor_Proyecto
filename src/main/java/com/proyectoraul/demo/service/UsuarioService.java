@@ -9,7 +9,7 @@ public interface UsuarioService {
 
     List<UsuarioDTO> listar();
 
-    UsuarioDTO buscarPorId(Integer id_usuario);
+    UsuarioDTO buscarPorIdUsuario(Integer id_usuario);
 
     UsuarioDTO actualizar(Integer id_usuario, UsuarioDTO dto);
 

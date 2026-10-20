@@ -36,11 +36,11 @@ public class UsuarioDTO {
         this.password = password;
     }
 
-    public Integer getId() {
+    public Integer getIdUsuario() {
         return id_usuario;
     }
 
-    public void setId(Integer id_usuario) {
+    public void setIdUsuario(Integer id_usuario) {
         this.id_usuario = id_usuario;
     }
 

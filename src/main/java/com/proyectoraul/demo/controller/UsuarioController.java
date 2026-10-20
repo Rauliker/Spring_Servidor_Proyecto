@@ -39,8 +39,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id_usuario}")
-    public UsuarioDTO buscarPorId(@PathVariable Integer id_usuario) {
-        return service.buscarPorId(id_usuario);
+    public UsuarioDTO buscarPorIdUsuario(@PathVariable Integer id_usuario) {
+        return service.buscarPorIdUsuario(id_usuario);
     }
 
     @PutMapping("/{id_usuario}")
