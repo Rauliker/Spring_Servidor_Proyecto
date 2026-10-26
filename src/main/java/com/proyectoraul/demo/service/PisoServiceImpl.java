@@ -11,12 +11,14 @@ import com.proyectoraul.demo.dto.PisoDTO;
 import com.proyectoraul.demo.mapper.PisoMapper;
 import com.proyectoraul.demo.model.Piso;
 import com.proyectoraul.demo.repository.PisoRepository;
+import com.proyectoraul.demo.util.AleatorioAlfanumerico;
 
 @Service
 public class PisoServiceImpl implements PisoService {
 
     private final PisoRepository repository;
     private final PisoMapper mapper;
+    public AleatorioAlfanumerico aleatorio = new AleatorioAlfanumerico();
 
     public PisoServiceImpl(
             PisoRepository repository,
@@ -28,13 +30,13 @@ public class PisoServiceImpl implements PisoService {
     @Override
     @Transactional
     public PisoDTO crear(PisoDTO dto) {
+        Integer logitudCodigo = 10;
+        String codigo = aleatorio.ValoresAleatorios(logitudCodigo);
+        do {
+            codigo = aleatorio.ValoresAleatorios(logitudCodigo);
 
-        if (repository.existsByCodigo(dto.getCodigoInvitacion())) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Ya existe un piso con ese codigo");
-        }
-
+        } while (repository.existsByCodigo(codigo) == true);
+        dto.setCodigoInvitacion(codigo);
         Piso piso = mapper.toEntity(dto);
 
         // el ID lo genera PostgreSQL
@@ -69,25 +71,17 @@ public class PisoServiceImpl implements PisoService {
     @Override
     @Transactional
     public PisoDTO actualizar(Integer IdPiso, PisoDTO dto) {
-        Piso existente = repository.buscarPorIdPisoSQL(IdPiso)
+        repository.buscarPorIdPisoSQL(IdPiso)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Usuario no encontrado"));
-
-        repository.buscarPorCodigoPisoSQL(dto.getCodigoInvitacion()).ifPresent(otro -> {
-            if (!otro.getIdPiso().equals(IdPiso)) {
-                throw new ResponseStatusException(
-                        HttpStatus.CONFLICT, "El codigo ya existe");
-            }
-        });
+                        HttpStatus.NOT_FOUND, "Piso no encontrado"));
 
         int filas = repository.actualizarPiso(
                 IdPiso,
-                dto.getNombre(),
-                dto.getCodigoInvitacion());
+                dto.getNombre());
 
         if (filas == 0) {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Usuario no encontrado");
+                    HttpStatus.NOT_FOUND, "Piso no encontrado");
         }
 
         return mapper.toDTO(

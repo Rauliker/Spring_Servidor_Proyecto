@@ -23,14 +23,12 @@ public interface PisoRepository extends JpaRepository<Piso, Integer> {
     @Modifying
     @Query(value = """
             UPDATE pisos
-            SET nombre = :nombre,
-                codigo_invitacion = :codigo_invitacion
+            SET nombre = :nombre
             WHERE id_piso = :id_piso
             """, nativeQuery = true)
     int actualizarPiso(
             @Param("id_piso") Integer id_piso,
-            @Param("nombre") String nombre,
-            @Param("codigo_invitacion") String codigo_invitacion);
+            @Param("nombre") String nombre);
 
     @Modifying
     @Query(value = "DELETE FROM pisos WHERE id_piso = :id_piso", nativeQuery = true)

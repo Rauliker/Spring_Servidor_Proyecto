@@ -10,7 +10,7 @@ public class PisoDTO {
     @Size(max = 100, message = "El nombre no puede superar 100 caracteres")
     private String nombre;
 
-    @Size(max = 100, message = "El nombre de usuario no puede superar 100 caracteres")
+    @Size(max = 100, message = "El codigo del piso no puede superar 100 caracteres")
     private String codigoInvitacion;
 
     public PisoDTO() {

@@ -19,7 +19,7 @@ public class Piso {
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    @Column(name = "\"codigo_invitacion\"", nullable = true, length = 100)
+    @Column(name = "\"codigo_invitacion\"", nullable = false, length = 100)
     private String codigoInvitacion;
 
     public Piso() {
