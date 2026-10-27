@@ -69,7 +69,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public UsuarioDTO actualizar(Integer IdUsuario, UsuarioDTO dto) {
-        Usuario existente = repository.buscarPorIdUsuarioSQL(IdUsuario)
+        repository.buscarPorIdUsuarioSQL(IdUsuario)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
