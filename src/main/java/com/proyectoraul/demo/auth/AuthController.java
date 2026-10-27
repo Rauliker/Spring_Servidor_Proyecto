@@ -41,11 +41,6 @@ public class AuthController {
                                 .orElse(null);
 
                 System.out.println("Usuario encontrado: " + usuario.getEmail());
-
-                boolean coincide = ((request.password()) == (usuario.getPassword()));
-
-                System.out.println("Contraseña correcta: " + coincide + " " + request.password() + " "
-                                + usuario.getPassword());
                 if (usuario == null
                                 || !passwordEncoder.matches(
                                                 request.password(),
