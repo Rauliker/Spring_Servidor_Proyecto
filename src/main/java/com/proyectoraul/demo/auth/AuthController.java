@@ -19,46 +19,52 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final UsuarioRepository usuarioRepository;
-    private final TokenService tokenService;
-    private final PasswordEncoder passwordEncoder;
+        private final UsuarioRepository usuarioRepository;
+        private final TokenService tokenService;
+        private final PasswordEncoder passwordEncoder;
 
-    public AuthController(
-            UsuarioRepository usuarioRepository,
-            TokenService tokenService,
-            PasswordEncoder passwordEncoder) {
-        this.usuarioRepository = usuarioRepository;
-        this.tokenService = tokenService;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(
-            @Valid @RequestBody LoginRequest request) {
-
-        Usuario usuario = usuarioRepository
-                .buscarPorEmailSQL(request.email())
-                .orElse(null);
-
-        if (usuario == null
-                || !passwordEncoder.matches(
-                        request.password(),
-                        usuario.getPassword())) {
-
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of(
-                            "error",
-                            "Email o contraseña incorrectos"));
+        public AuthController(
+                        UsuarioRepository usuarioRepository,
+                        TokenService tokenService,
+                        PasswordEncoder passwordEncoder) {
+                this.usuarioRepository = usuarioRepository;
+                this.tokenService = tokenService;
+                this.passwordEncoder = passwordEncoder;
         }
 
-        String token = tokenService.generarToken(
-                usuario.getIdUsuario(),
-                usuario.getUserName(),
-                usuario.getEmail(),
-                usuario.getNombre());
+        @PostMapping("/login")
+        public ResponseEntity<?> login(
+                        @Valid @RequestBody LoginRequest request) {
 
-        return ResponseEntity.ok(
-                Map.of("accessToken", token));
-    }
+                Usuario usuario = usuarioRepository
+                                .buscarPorEmailSQL(request.email())
+                                .orElse(null);
+
+                System.out.println("Usuario encontrado: " + usuario.getEmail());
+
+                boolean coincide = ((request.password()) == (usuario.getPassword()));
+
+                System.out.println("Contraseña correcta: " + coincide + " " + request.password() + " "
+                                + usuario.getPassword());
+                if (usuario == null
+                                || !passwordEncoder.matches(
+                                                request.password(),
+                                                usuario.getPassword())) {
+
+                        return ResponseEntity
+                                        .status(HttpStatus.UNAUTHORIZED)
+                                        .body(Map.of(
+                                                        "error",
+                                                        "Email o contraseña incorrectos"));
+                }
+
+                String token = tokenService.generarToken(
+                                usuario.getIdUsuario(),
+                                usuario.getUserName(),
+                                usuario.getEmail(),
+                                usuario.getNombre());
+
+                return ResponseEntity.ok(
+                                Map.of("accessToken", token));
+        }
 }
