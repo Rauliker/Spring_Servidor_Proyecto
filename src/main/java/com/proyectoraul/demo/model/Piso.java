@@ -1,19 +1,19 @@
 package com.proyectoraul.demo.model;
 
-import org.springframework.data.annotation.Id;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "pisos")
+@Table(name = "pisos", uniqueConstraints = @UniqueConstraint(columnNames = "\"codigo_invitacion\""))
 public class Piso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_pisoo")
+    @Column(name = "id_piso")
     private Integer idPiso;
 
     @Column(name = "nombre", nullable = false, length = 100)

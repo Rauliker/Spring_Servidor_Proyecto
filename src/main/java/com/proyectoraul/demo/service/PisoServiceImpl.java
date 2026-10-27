@@ -35,7 +35,7 @@ public class PisoServiceImpl implements PisoService {
         do {
             codigo = aleatorio.ValoresAleatorios(logitudCodigo);
 
-        } while (repository.existsByCodigo(codigo) == true);
+        } while (repository.buscarPorCodigoPisoSQL(codigo) == null);
         dto.setCodigoInvitacion(codigo);
         Piso piso = mapper.toEntity(dto);
 
