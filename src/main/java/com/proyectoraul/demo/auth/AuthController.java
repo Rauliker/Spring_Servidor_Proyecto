@@ -40,7 +40,6 @@ public class AuthController {
                                 .buscarPorEmailSQL(request.email())
                                 .orElse(null);
 
-                System.out.println("Usuario encontrado: " + usuario.getEmail());
                 if (usuario == null
                                 || !passwordEncoder.matches(
                                                 request.password(),
