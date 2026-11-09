@@ -5,6 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
@@ -21,6 +24,10 @@ public class Piso {
 
     @Column(name = "\"codigo_invitacion\"", nullable = false, length = 100)
     private String codigoInvitacion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", nullable = false)
+    private Usuario usuarioCreador;
 
     public Piso() {
     }
@@ -53,5 +60,13 @@ public class Piso {
 
     public void setCodigoInvitacion(String codigoInvitacion) {
         this.codigoInvitacion = codigoInvitacion;
+    }
+
+    public Usuario getUsuarioCreador() {
+        return usuarioCreador;
+    }
+
+    public void setUsuarioCreador(Usuario usuarioCreador) {
+        this.usuarioCreador = usuarioCreador;
     }
 }

@@ -11,6 +11,7 @@ import com.proyectoraul.demo.dto.PisoDTO;
 import com.proyectoraul.demo.mapper.PisoMapper;
 import com.proyectoraul.demo.model.Piso;
 import com.proyectoraul.demo.repository.PisoRepository;
+import com.proyectoraul.demo.repository.UsuarioRepository;
 import com.proyectoraul.demo.util.AleatorioAlfanumerico;
 
 @Service
@@ -18,26 +19,33 @@ public class PisoServiceImpl implements PisoService {
 
     private final PisoRepository repository;
     private final PisoMapper mapper;
+    private final UsuarioRepository usuarioRepository;
     public AleatorioAlfanumerico aleatorio = new AleatorioAlfanumerico();
 
     public PisoServiceImpl(
             PisoRepository repository,
-            PisoMapper mapper) {
+            PisoMapper mapper,
+            UsuarioRepository usuarioRepository) {
         this.repository = repository;
         this.mapper = mapper;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Override
     @Transactional
-    public PisoDTO crear(PisoDTO dto) {
+    public PisoDTO crear(PisoDTO dto, Integer idUsuario) {
         Integer logitudCodigo = 10;
         String codigo = aleatorio.ValoresAleatorios(logitudCodigo);
         do {
             codigo = aleatorio.ValoresAleatorios(logitudCodigo);
 
         } while (repository.buscarPorCodigoPisoSQL(codigo) == null);
+
         dto.setCodigoInvitacion(codigo);
         Piso piso = mapper.toEntity(dto);
+        piso.setUsuarioCreador(usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Usuario creador no encontrado")));
 
         // el ID lo genera PostgreSQL
         piso.setIdPiso(null);

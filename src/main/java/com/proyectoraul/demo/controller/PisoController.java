@@ -3,6 +3,8 @@ package com.proyectoraul.demo.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.proyectoraul.demo.auth.TokenService;
 import com.proyectoraul.demo.dto.PisoDTO;
 import com.proyectoraul.demo.service.PisoService;
 
@@ -22,15 +25,20 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/pisos")
 public class PisoController {
     private final PisoService service;
+    private final TokenService tokenService;
 
-    public PisoController(PisoService service) {
+    public PisoController(PisoService service, TokenService tokenService) {
         this.service = service;
+        this.tokenService = tokenService;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PisoDTO crear(@Valid @RequestBody PisoDTO dto) {
-        return service.crear(dto);
+    public PisoDTO crear(
+            @Valid @RequestBody PisoDTO dto,
+            @AuthenticationPrincipal Jwt jwt) {
+        Integer idUsuario = tokenService.obtenerDatosToken(jwt.getTokenValue()).idUsuario();
+        return service.crear(dto, idUsuario);
     }
 
     @GetMapping

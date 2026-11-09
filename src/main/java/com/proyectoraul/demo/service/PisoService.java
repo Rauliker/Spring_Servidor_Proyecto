@@ -5,7 +5,7 @@ import java.util.List;
 import com.proyectoraul.demo.dto.PisoDTO;
 
 public interface PisoService {
-    PisoDTO crear(PisoDTO dto);
+    PisoDTO crear(PisoDTO dto, Integer idUsuario);
 
     List<PisoDTO> listar();
 

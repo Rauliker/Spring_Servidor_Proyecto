@@ -9,7 +9,10 @@ import com.proyectoraul.demo.model.Piso;
 public class PisoMapper {
     public PisoDTO toDTO(Piso piso) {
         return new PisoDTO(
-                piso.getIdPiso(), piso.getNombre(), piso.getCodigoInvitacion());
+                piso.getIdPiso(),
+                piso.getNombre(),
+                piso.getCodigoInvitacion(),
+                piso.getUsuarioCreador().getIdUsuario());
     }
 
     public Piso toEntity(PisoDTO dto) {
