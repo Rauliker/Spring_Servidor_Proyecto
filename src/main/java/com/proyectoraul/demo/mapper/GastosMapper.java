@@ -21,13 +21,17 @@ public class GastosMapper {
                 gasto.getUsuarioPagador() != null
                         ? gasto.getUsuarioPagador().getIdUsuario()
                         : null,
+                gasto.getUsuarioCreador() != null
+                        ? gasto.getUsuarioCreador().getIdUsuario()
+                        : null,
                 gasto.getConcepto(),
                 gasto.getCantidad(),
                 gasto.getCategorias(),
                 gasto.getFecha());
     }
 
-    public static Gastos toEntity(GastosDTO dto, Piso piso, Usuario usuarioPagador) {
+    public static Gastos toEntity(
+            GastosDTO dto, Piso piso, Usuario usuarioPagador, Usuario usuarioCreador) {
         if (dto == null) {
             return null;
         }
@@ -36,6 +40,7 @@ public class GastosMapper {
         gasto.setIdGasto(dto.getIdGasto());
         gasto.setPiso(piso);
         gasto.setUsuarioPagador(usuarioPagador);
+        gasto.setUsuarioCreador(usuarioCreador);
         gasto.setConcepto(dto.getConcepto());
         gasto.setCantidad(dto.getCantidad());
         gasto.setCategorias(dto.getCategorias());

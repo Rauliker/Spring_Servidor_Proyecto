@@ -58,11 +58,15 @@ public class GastosServiceImpl implements GastosService {
     }
 
     @Override
-    public GastosDTO create(GastosDTO dto) {
+    public GastosDTO create(GastosDTO dto, Integer idUsuarioCreador) {
         Piso piso = findPiso(dto.getIdPiso());
         Usuario usuarioPagador = findUsuario(dto.getIdUsuarioPagador());
+        Usuario usuarioCreador = usuarioRepository.findById(idUsuarioCreador)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Usuario creador no encontrado"));
 
-        Gastos gasto = GastosMapper.toEntity(dto, piso, usuarioPagador);
+        Gastos gasto = GastosMapper.toEntity(
+                dto, piso, usuarioPagador, usuarioCreador);
         gasto.setIdGasto(null);
         return GastosMapper.toDTO(gastosRepository.save(gasto));
     }
