@@ -59,9 +59,33 @@ public class TokenService {
                 Jwt jwt = jwtDecoder.decode(token);
 
                 return new DatosToken(
-                                jwt.getClaim("idUsuario"),
-                                jwt.getClaim("userName"),
-                                jwt.getClaim("email"),
-                                jwt.getClaim("nombre"));
+                                claimAsInteger(jwt, "idUsuario"),
+                                claimAsString(jwt, "userName"),
+                                claimAsString(jwt, "email"),
+                                claimAsString(jwt, "nombre"));
+        }
+
+        private Integer claimAsInteger(Jwt jwt, String claimName) {
+                Object claimValue = jwt.getClaim(claimName);
+
+                if (claimValue == null) {
+                        return null;
+                }
+
+                if (claimValue instanceof Number number) {
+                        return number.intValue();
+                }
+
+                if (claimValue instanceof String stringValue) {
+                        return Integer.valueOf(stringValue);
+                }
+
+                throw new IllegalArgumentException(
+                                "El claim '" + claimName + "' debe ser numérico: " + claimValue);
+        }
+
+        private String claimAsString(Jwt jwt, String claimName) {
+                Object claimValue = jwt.getClaim(claimName);
+                return claimValue == null ? null : String.valueOf(claimValue);
         }
 }
