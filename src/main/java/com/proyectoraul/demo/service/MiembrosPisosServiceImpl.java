@@ -2,6 +2,7 @@
 package com.proyectoraul.demo.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,7 +79,14 @@ public class MiembrosPisosServiceImpl implements MiembrosPisosService {
             throw new RuntimeException("El usuario ya pertenece a este piso");
         }
 
-        MiembrosPiso miembro = MiembrosPisosMapper.toEntity(rol, usuario, piso);
+        Role rolAsignado = Objects.equals(
+                usuario.getIdUsuario(),
+                piso.getUsuarioCreador().getIdUsuario())
+                        ? Role.ADMIN
+                        : Role.MIEMBRO;
+
+        MiembrosPiso miembro = MiembrosPisosMapper.toEntity(
+                rolAsignado, usuario, piso);
         MiembrosPiso guardado = miembrosRepository.save(miembro);
         return MiembrosPisosMapper.toDTO(guardado);
     }

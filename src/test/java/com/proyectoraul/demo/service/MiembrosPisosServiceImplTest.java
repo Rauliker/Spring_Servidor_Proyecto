@@ -29,8 +29,43 @@ class MiembrosPisosServiceImplTest {
                 miembrosRepository, usuarioRepository, pisoRepository);
         Usuario usuario = new Usuario();
         usuario.setIdUsuario(7);
+        Usuario creador = new Usuario();
+        creador.setIdUsuario(8);
         Piso piso = new Piso();
         piso.setIdPiso(42);
+        piso.setUsuarioCreador(creador);
+
+        when(usuarioRepository.findById(7)).thenReturn(Optional.of(usuario));
+        when(pisoRepository.buscarPorCodigoPisoSQL("codigo-piso"))
+                .thenReturn(Optional.of(piso));
+        when(miembrosRepository.existsByUsuario_IdUsuarioAndPiso_IdPiso(7L, 42L))
+                .thenReturn(false);
+        when(miembrosRepository.save(any(MiembrosPiso.class))).thenAnswer(invocation -> {
+            MiembrosPiso miembro = invocation.getArgument(0);
+            miembro.setIdMiembro(100L);
+            return miembro;
+        });
+
+        MiembrosPisosDTO creado = service.create(7, "codigo-piso", Role.ADMIN);
+
+        assertEquals(7L, creado.getIdUsuario());
+        assertEquals(42L, creado.getIdPiso());
+        assertEquals(Role.MIEMBRO, creado.getRol());
+        verify(pisoRepository).buscarPorCodigoPisoSQL("codigo-piso");
+    }
+
+    @Test
+    void crearAsignaAdminCuandoElUsuarioEsCreadorDelPiso() {
+        MiembrosPisosRepository miembrosRepository = mock(MiembrosPisosRepository.class);
+        UsuarioRepository usuarioRepository = mock(UsuarioRepository.class);
+        PisoRepository pisoRepository = mock(PisoRepository.class);
+        MiembrosPisosServiceImpl service = new MiembrosPisosServiceImpl(
+                miembrosRepository, usuarioRepository, pisoRepository);
+        Usuario usuario = new Usuario();
+        usuario.setIdUsuario(7);
+        Piso piso = new Piso();
+        piso.setIdPiso(42);
+        piso.setUsuarioCreador(usuario);
 
         when(usuarioRepository.findById(7)).thenReturn(Optional.of(usuario));
         when(pisoRepository.buscarPorCodigoPisoSQL("codigo-piso"))
@@ -45,8 +80,6 @@ class MiembrosPisosServiceImplTest {
 
         MiembrosPisosDTO creado = service.create(7, "codigo-piso", Role.MIEMBRO);
 
-        assertEquals(7L, creado.getIdUsuario());
-        assertEquals(42L, creado.getIdPiso());
-        verify(pisoRepository).buscarPorCodigoPisoSQL("codigo-piso");
+        assertEquals(Role.ADMIN, creado.getRol());
     }
 }

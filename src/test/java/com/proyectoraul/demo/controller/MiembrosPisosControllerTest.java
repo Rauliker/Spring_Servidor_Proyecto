@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import com.proyectoraul.demo.auth.TokenService;
 import com.proyectoraul.demo.dto.CrearMiembroPisoDTO;
 import com.proyectoraul.demo.dto.DatosToken;
-import com.proyectoraul.demo.model.Role;
 import com.proyectoraul.demo.service.MiembrosPisosService;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -22,7 +21,6 @@ class MiembrosPisosControllerTest {
                 miembrosPisosService, tokenService);
         CrearMiembroPisoDTO dto = new CrearMiembroPisoDTO();
         dto.setCodigoInvitacion("codigo-piso");
-        dto.setRol(Role.MIEMBRO);
         Jwt jwt = Jwt.withTokenValue("token-validado")
                 .header("alg", "HS256")
                 .subject("usuario")
@@ -33,6 +31,6 @@ class MiembrosPisosControllerTest {
 
         controller.create(dto, jwt);
 
-        verify(miembrosPisosService).create(7, "codigo-piso", Role.MIEMBRO);
+        verify(miembrosPisosService).create(7, "codigo-piso", null);
     }
 }
