@@ -4,6 +4,7 @@ package com.proyectoraul.demo.mapper;
 import com.proyectoraul.demo.dto.MiembrosPisosDTO;
 import com.proyectoraul.demo.model.MiembrosPiso;
 import com.proyectoraul.demo.model.Piso;
+import com.proyectoraul.demo.model.Role;
 import com.proyectoraul.demo.model.Usuario;
 
 public class MiembrosPisosMapper {
@@ -28,20 +29,19 @@ public class MiembrosPisosMapper {
     }
 
     public static MiembrosPiso toEntity(
-            MiembrosPisosDTO dto,
+            Role rol,
             Usuario usuario,
             Piso piso) {
 
-        if (dto == null) {
+        if (usuario == null || piso == null || rol == null) {
             return null;
         }
 
         MiembrosPiso miembroPiso = new MiembrosPiso();
 
-        miembroPiso.setIdMiembro(dto.getIdMiembro());
         miembroPiso.setUsuario(usuario);
         miembroPiso.setPiso(piso);
-        miembroPiso.setRol(dto.getRol());
+        miembroPiso.setRol(rol);
 
         return miembroPiso;
     }
