@@ -2,6 +2,8 @@ package com.proyectoraul.demo.dto;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,6 +17,9 @@ public class TareasDTO {
 
     @NotNull(message = "El ID del usuario asignado es obligatorio")
     private Integer idUsuarioAsignado;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Integer idUsuarioCreador;
 
     @NotBlank(message = "El título es obligatorio")
     @Size(max = 150, message = "El título no puede superar los 150 caracteres")
@@ -38,6 +43,7 @@ public class TareasDTO {
             Integer idTarea,
             Integer idPiso,
             Integer idUsuarioAsignado,
+            Integer idUsuarioCreador,
             String titulo,
             String descripcion,
             LocalDate fechaLimite,
@@ -46,6 +52,7 @@ public class TareasDTO {
         this.idTarea = idTarea;
         this.idPiso = idPiso;
         this.idUsuarioAsignado = idUsuarioAsignado;
+        this.idUsuarioCreador = idUsuarioCreador;
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.fechaLimite = fechaLimite;
@@ -75,6 +82,14 @@ public class TareasDTO {
 
     public void setIdUsuarioAsignado(Integer idUsuarioAsignado) {
         this.idUsuarioAsignado = idUsuarioAsignado;
+    }
+
+    public Integer getIdUsuarioCreador() {
+        return idUsuarioCreador;
+    }
+
+    public void setIdUsuarioCreador(Integer idUsuarioCreador) {
+        this.idUsuarioCreador = idUsuarioCreador;
     }
 
     public String getTitulo() {

@@ -29,6 +29,10 @@ public class Tareas {
     @JoinColumn(name = "id_usuario_asignado", nullable = false)
     private Usuario usuarioAsignado;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario_creador")
+    private Usuario usuarioCreador;
+
     @Column(name = "titulo", nullable = false, length = 150)
     private String titulo;
 
@@ -69,6 +73,14 @@ public class Tareas {
 
     public void setUsuarioAsignado(Usuario usuarioAsignado) {
         this.usuarioAsignado = usuarioAsignado;
+    }
+
+    public Usuario getUsuarioCreador() {
+        return usuarioCreador;
+    }
+
+    public void setUsuarioCreador(Usuario usuarioCreador) {
+        this.usuarioCreador = usuarioCreador;
     }
 
     public String getTitulo() {

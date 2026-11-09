@@ -12,7 +12,7 @@ public interface TareasService {
 
     TareasDTO findById(Integer id);
 
-    TareasDTO create(TareasDTO dto);
+    TareasDTO create(TareasDTO dto, Integer idUsuarioCreador);
 
     TareasDTO update(Integer id, TareasDTO dto);
 

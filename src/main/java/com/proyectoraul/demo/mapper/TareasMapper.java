@@ -21,6 +21,7 @@ public class TareasMapper {
                 tarea.getIdTarea(),
                 tarea.getPiso() != null ? tarea.getPiso().getIdPiso() : null,
                 tarea.getUsuarioAsignado() != null ? tarea.getUsuarioAsignado().getIdUsuario() : null,
+                tarea.getUsuarioCreador() != null ? tarea.getUsuarioCreador().getIdUsuario() : null,
                 tarea.getTitulo(),
                 tarea.getDescripcion(),
                 tarea.getFechaLimite(),
@@ -28,7 +29,8 @@ public class TareasMapper {
                 tarea.getFechaCompletada());
     }
 
-    public static Tareas toEntity(TareasDTO dto, Piso piso, Usuario usuarioAsignado) {
+    public static Tareas toEntity(
+            TareasDTO dto, Piso piso, Usuario usuarioAsignado, Usuario usuarioCreador) {
         if (dto == null) {
             return null;
         }
@@ -37,6 +39,7 @@ public class TareasMapper {
         tarea.setIdTarea(dto.getIdTarea());
         tarea.setPiso(piso);
         tarea.setUsuarioAsignado(usuarioAsignado);
+        tarea.setUsuarioCreador(usuarioCreador);
         tarea.setTitulo(dto.getTitulo());
         tarea.setDescripcion(dto.getDescripcion());
         tarea.setFechaLimite(dto.getFechaLimite());
