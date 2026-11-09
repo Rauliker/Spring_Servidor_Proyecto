@@ -9,7 +9,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.proyectoraul.demo.dto.PisoDTO;
 import com.proyectoraul.demo.mapper.PisoMapper;
+import com.proyectoraul.demo.model.MiembrosPiso;
 import com.proyectoraul.demo.model.Piso;
+import com.proyectoraul.demo.model.Role;
+import com.proyectoraul.demo.model.Usuario;
+import com.proyectoraul.demo.repository.MiembrosPisosRepository;
 import com.proyectoraul.demo.repository.PisoRepository;
 import com.proyectoraul.demo.repository.UsuarioRepository;
 import com.proyectoraul.demo.util.AleatorioAlfanumerico;
@@ -20,15 +24,18 @@ public class PisoServiceImpl implements PisoService {
     private final PisoRepository repository;
     private final PisoMapper mapper;
     private final UsuarioRepository usuarioRepository;
+    private final MiembrosPisosRepository miembrosPisosRepository;
     public AleatorioAlfanumerico aleatorio = new AleatorioAlfanumerico();
 
     public PisoServiceImpl(
             PisoRepository repository,
             PisoMapper mapper,
-            UsuarioRepository usuarioRepository) {
+            UsuarioRepository usuarioRepository,
+            MiembrosPisosRepository miembrosPisosRepository) {
         this.repository = repository;
         this.mapper = mapper;
         this.usuarioRepository = usuarioRepository;
+        this.miembrosPisosRepository = miembrosPisosRepository;
     }
 
     @Override
@@ -43,15 +50,18 @@ public class PisoServiceImpl implements PisoService {
 
         dto.setCodigoInvitacion(codigo);
         Piso piso = mapper.toEntity(dto);
-        piso.setUsuarioCreador(usuarioRepository.findById(idUsuario)
+        Usuario creador = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Usuario creador no encontrado")));
+                        HttpStatus.NOT_FOUND, "Usuario creador no encontrado"));
+        piso.setUsuarioCreador(creador);
 
         // el ID lo genera PostgreSQL
         piso.setIdPiso(null);
 
         // guarda el piso en la base de datos
         Piso guardado = repository.save(piso);
+        miembrosPisosRepository.save(
+                new MiembrosPiso(null, creador, guardado, Role.ADMIN));
 
         // devuelve el piso guardado, con su ID
         return mapper.toDTO(guardado);

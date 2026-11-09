@@ -59,11 +59,15 @@ public class TareasServiceImpl implements TareasService {
     }
 
     @Override
-    public TareasDTO create(TareasDTO dto) {
+    public TareasDTO create(TareasDTO dto, Integer idUsuarioCreador) {
         Piso piso = findPiso(dto.getIdPiso());
         Usuario usuarioAsignado = findUsuario(dto.getIdUsuarioAsignado());
+        Usuario usuarioCreador = usuarioRepository.findById(idUsuarioCreador)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Usuario creador no encontrado"));
 
-        Tareas tarea = TareasMapper.toEntity(dto, piso, usuarioAsignado);
+        Tareas tarea = TareasMapper.toEntity(
+                dto, piso, usuarioAsignado, usuarioCreador);
         tarea.setIdTarea(null);
         return TareasMapper.toDTO(tareasRepository.save(tarea));
     }

@@ -3,6 +3,8 @@ package com.proyectoraul.demo.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
@@ -18,6 +20,9 @@ public class GastosDTO {
 
     @NotNull(message = "El ID del usuario pagador es obligatorio")
     private Integer idUsuarioPagador;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Integer idUsuarioCreador;
 
     @NotBlank(message = "El concepto es obligatorio")
     @Size(max = 150, message = "El concepto no puede superar los 150 caracteres")
@@ -42,6 +47,7 @@ public class GastosDTO {
             Integer idGasto,
             Integer idPiso,
             Integer idUsuarioPagador,
+            Integer idUsuarioCreador,
             String concepto,
             BigDecimal cantidad,
             String categorias,
@@ -49,6 +55,7 @@ public class GastosDTO {
         this.idGasto = idGasto;
         this.idPiso = idPiso;
         this.idUsuarioPagador = idUsuarioPagador;
+        this.idUsuarioCreador = idUsuarioCreador;
         this.concepto = concepto;
         this.cantidad = cantidad;
         this.categorias = categorias;
@@ -77,6 +84,14 @@ public class GastosDTO {
 
     public void setIdUsuarioPagador(Integer idUsuarioPagador) {
         this.idUsuarioPagador = idUsuarioPagador;
+    }
+
+    public Integer getIdUsuarioCreador() {
+        return idUsuarioCreador;
+    }
+
+    public void setIdUsuarioCreador(Integer idUsuarioCreador) {
+        this.idUsuarioCreador = idUsuarioCreador;
     }
 
     public String getConcepto() {

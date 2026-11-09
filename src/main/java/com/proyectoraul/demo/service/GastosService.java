@@ -12,7 +12,7 @@ public interface GastosService {
 
     GastosDTO findById(Integer id);
 
-    GastosDTO create(GastosDTO dto);
+    GastosDTO create(GastosDTO dto, Integer idUsuarioCreador);
 
     GastosDTO update(Integer id, GastosDTO dto);
 

@@ -30,6 +30,10 @@ public class Gastos {
     @JoinColumn(name = "id_usuario_pagador", nullable = false)
     private Usuario usuarioPagador;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario_creador")
+    private Usuario usuarioCreador;
+
     @Column(name = "concepto", nullable = false, length = 150)
     private String concepto;
 
@@ -67,6 +71,14 @@ public class Gastos {
 
     public void setUsuarioPagador(Usuario usuarioPagador) {
         this.usuarioPagador = usuarioPagador;
+    }
+
+    public Usuario getUsuarioCreador() {
+        return usuarioCreador;
+    }
+
+    public void setUsuarioCreador(Usuario usuarioCreador) {
+        this.usuarioCreador = usuarioCreador;
     }
 
     public String getConcepto() {
