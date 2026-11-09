@@ -2,6 +2,7 @@
 package com.proyectoraul.demo.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +11,7 @@ import com.proyectoraul.demo.dto.MiembrosPisosDTO;
 import com.proyectoraul.demo.mapper.MiembrosPisosMapper;
 import com.proyectoraul.demo.model.MiembrosPiso;
 import com.proyectoraul.demo.model.Piso;
+import com.proyectoraul.demo.model.Role;
 import com.proyectoraul.demo.model.Usuario;
 import com.proyectoraul.demo.repository.MiembrosPisosRepository;
 import com.proyectoraul.demo.repository.PisoRepository;
@@ -52,27 +54,40 @@ public class MiembrosPisosServiceImpl implements MiembrosPisosService {
     }
 
     @Override
-    public MiembrosPisosDTO create(MiembrosPisosDTO dto) {
-        if (miembrosRepository
-                .existsByUsuario_IdUsuarioAndPiso_IdPiso(
-                        dto.getIdUsuario(), dto.getIdPiso())) {
-            throw new RuntimeException(
-                    "El usuario ya pertenece a este piso");
+    public MiembrosPisosDTO create(
+            Integer idUsuario, String codigoInvitacion, Role rol) {
+        if (idUsuario == null) {
+            throw new IllegalArgumentException(
+                    "El token no contiene el ID del usuario");
         }
-        Usuario usuario = usuarioRepository
-                .findById(dto.getIdUsuario().intValue())
-                .orElseThrow(() -> new RuntimeException("No existe el usuario"));
+
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException(
+                        "No existe el usuario"));
 
         Piso piso = pisoRepository
-                .findById(dto.getIdPiso().intValue())
-                .orElseThrow(() -> new RuntimeException("No existe el piso"));
+                .buscarPorCodigoPisoSQL(codigoInvitacion)
+                .orElseThrow(() -> new RuntimeException(
+                        "No existe el piso con ese código"));
 
-        MiembrosPiso miembro = MiembrosPisosMapper.toEntity(dto, usuario, piso);
+        Long idUsuarioLong = usuario.getIdUsuario().longValue();
+        Long idPisoLong = piso.getIdPiso().longValue();
+        boolean yaEsMiembro = miembrosRepository
+                .existsByUsuario_IdUsuarioAndPiso_IdPiso(
+                        idUsuarioLong, idPisoLong);
+        if (yaEsMiembro) {
+            throw new RuntimeException("El usuario ya pertenece a este piso");
+        }
 
-        miembro.setIdMiembro(null);
+        Role rolAsignado = Objects.equals(
+                usuario.getIdUsuario(),
+                piso.getUsuarioCreador().getIdUsuario())
+                        ? Role.ADMIN
+                        : Role.MIEMBRO;
 
+        MiembrosPiso miembro = MiembrosPisosMapper.toEntity(
+                rolAsignado, usuario, piso);
         MiembrosPiso guardado = miembrosRepository.save(miembro);
-
         return MiembrosPisosMapper.toDTO(guardado);
     }
 
@@ -94,10 +109,10 @@ public class MiembrosPisosServiceImpl implements MiembrosPisosService {
                 .existsByUsuario_IdUsuarioAndPiso_IdPiso(
                         dto.getIdUsuario(), dto.getIdPiso());
 
-        boolean mismaRelacion = miembro.getUsuario().getIdUsuario()
-                .equals(dto.getIdUsuario())
-                && miembro.getPiso().getIdPiso()
-                        .equals(dto.getIdPiso());
+        boolean mismaRelacion = miembro.getUsuario().getIdUsuario().longValue()
+                == dto.getIdUsuario()
+                && miembro.getPiso().getIdPiso().longValue()
+                        == dto.getIdPiso();
 
         if (existe && !mismaRelacion) {
             throw new RuntimeException(

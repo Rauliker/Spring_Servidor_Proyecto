@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.proyectoraul.demo.auth.TokenService;
+import com.proyectoraul.demo.dto.CrearMiembroPisoDTO;
 import com.proyectoraul.demo.dto.MiembrosPisosDTO;
 import com.proyectoraul.demo.service.MiembrosPisosService;
 
@@ -23,10 +27,13 @@ import jakarta.validation.Valid;
 public class MiembrosPisosController {
 
     private final MiembrosPisosService miembrosPisosService;
+    private final TokenService tokenService;
 
     public MiembrosPisosController(
-            MiembrosPisosService miembrosPisosService) {
+            MiembrosPisosService miembrosPisosService, TokenService tokenService) {
         this.miembrosPisosService = miembrosPisosService;
+        this.tokenService = tokenService;
+
     }
 
     // Obtener todas las membresías
@@ -47,8 +54,11 @@ public class MiembrosPisosController {
     // Añadir un usuario a un piso
     @PostMapping
     public ResponseEntity<MiembrosPisosDTO> create(
-            @Valid @RequestBody MiembrosPisosDTO dto) {
-        MiembrosPisosDTO creado = miembrosPisosService.create(dto);
+            @Valid @RequestBody CrearMiembroPisoDTO dto,
+            @AuthenticationPrincipal Jwt jwt) {
+        Integer idUsuario = tokenService.obtenerDatosToken(jwt.getTokenValue()).idUsuario();
+        MiembrosPisosDTO creado = miembrosPisosService.create(
+                idUsuario, dto.getCodigoInvitacion(), dto.getRol());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(creado);
