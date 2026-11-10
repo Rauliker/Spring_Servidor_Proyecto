@@ -24,14 +24,17 @@ public class MiembrosPisosServiceImpl implements MiembrosPisosService {
     private final MiembrosPisosRepository miembrosRepository;
     private final UsuarioRepository usuarioRepository;
     private final PisoRepository pisoRepository;
+    private final MailNotificationService mailNotificationService;
 
     public MiembrosPisosServiceImpl(
             MiembrosPisosRepository miembrosRepository,
             UsuarioRepository usuarioRepository,
-            PisoRepository pisoRepository) {
+            PisoRepository pisoRepository,
+            MailNotificationService mailNotificationService) {
         this.miembrosRepository = miembrosRepository;
         this.usuarioRepository = usuarioRepository;
         this.pisoRepository = pisoRepository;
+        this.mailNotificationService = mailNotificationService;
     }
 
     @Override
@@ -88,6 +91,7 @@ public class MiembrosPisosServiceImpl implements MiembrosPisosService {
         MiembrosPiso miembro = MiembrosPisosMapper.toEntity(
                 rolAsignado, usuario, piso);
         MiembrosPiso guardado = miembrosRepository.save(miembro);
+        mailNotificationService.enviarAvisoAltaEnPiso(usuario, piso);
         return MiembrosPisosMapper.toDTO(guardado);
     }
 
@@ -134,6 +138,8 @@ public class MiembrosPisosServiceImpl implements MiembrosPisosService {
                 .orElseThrow(() -> new RuntimeException(
                         "No existe la membresía con ID: " + id));
 
+        mailNotificationService.enviarAvisoSalidaDePiso(
+                miembro.getUsuario(), miembro.getPiso());
         miembrosRepository.delete(miembro);
     }
 }

@@ -1,6 +1,7 @@
 package com.proyectoraul.demo.auth;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -10,6 +11,7 @@ import java.util.Optional;
 
 import com.proyectoraul.demo.model.Usuario;
 import com.proyectoraul.demo.repository.UsuarioRepository;
+import com.proyectoraul.demo.service.MailNotificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -23,14 +25,20 @@ class AuthControllerTest {
     private UsuarioRepository usuarioRepository;
     private TokenService tokenService;
     private PasswordEncoder passwordEncoder;
+    private MailNotificationService mailNotificationService;
 
     @BeforeEach
     void setUp() {
         usuarioRepository = mock(UsuarioRepository.class);
         tokenService = mock(TokenService.class);
         passwordEncoder = mock(PasswordEncoder.class);
+        mailNotificationService = mock(MailNotificationService.class);
         mockMvc = MockMvcBuilders.standaloneSetup(
-                new AuthController(usuarioRepository, tokenService, passwordEncoder))
+                new AuthController(
+                        usuarioRepository,
+                        tokenService,
+                        passwordEncoder,
+                        mailNotificationService))
                 .build();
     }
 
@@ -48,6 +56,8 @@ class AuthControllerTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").value("token-prueba"));
+
+        verify(mailNotificationService).enviarAvisoInicioSesion(usuario);
     }
 
     @Test

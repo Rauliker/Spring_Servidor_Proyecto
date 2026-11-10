@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.proyectoraul.demo.model.Usuario;
 import com.proyectoraul.demo.repository.UsuarioRepository;
+import com.proyectoraul.demo.service.MailNotificationService;
 
 import jakarta.validation.Valid;
 
@@ -22,14 +23,17 @@ public class AuthController {
         private final UsuarioRepository usuarioRepository;
         private final TokenService tokenService;
         private final PasswordEncoder passwordEncoder;
+        private final MailNotificationService mailNotificationService;
 
         public AuthController(
                         UsuarioRepository usuarioRepository,
                         TokenService tokenService,
-                        PasswordEncoder passwordEncoder) {
+                        PasswordEncoder passwordEncoder,
+                        MailNotificationService mailNotificationService) {
                 this.usuarioRepository = usuarioRepository;
                 this.tokenService = tokenService;
                 this.passwordEncoder = passwordEncoder;
+                this.mailNotificationService = mailNotificationService;
         }
 
         @PostMapping("/login")
@@ -57,6 +61,8 @@ public class AuthController {
                                 usuario.getUserName(),
                                 usuario.getEmail(),
                                 usuario.getNombre());
+
+                mailNotificationService.enviarAvisoInicioSesion(usuario);
 
                 return ResponseEntity.ok(
                                 Map.of("accessToken", token));
