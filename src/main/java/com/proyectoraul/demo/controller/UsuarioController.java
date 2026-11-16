@@ -20,7 +20,7 @@ import com.proyectoraul.demo.service.UsuarioService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping({"/api/usuarios", "/usuarios"})
 public class UsuarioController {
     private final UsuarioService service;
 

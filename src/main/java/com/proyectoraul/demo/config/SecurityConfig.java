@@ -37,6 +37,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 @Configuration
 public class SecurityConfig {
         private static final String USUARIOS_PATH = "/api/usuarios";
+        private static final String USUARIOS_ALIAS = "/usuarios";
 
         /**
          * Lee la clave JWT en Base64 y crea la clave HMAC.
@@ -119,9 +120,10 @@ public class SecurityConfig {
                 return request -> {
                         String path = request.getRequestURI().substring(request.getContextPath().length());
                         boolean postRegistro = HttpMethod.POST.matches(request.getMethod())
-                                        && USUARIOS_PATH.equals(path);
+                                        && (USUARIOS_PATH.equals(path) || USUARIOS_ALIAS.equals(path));
                         boolean getUsuario = HttpMethod.GET.matches(request.getMethod())
-                                        && (USUARIOS_PATH.equals(path) || esRutaDeUsuario(path));
+                                        && (esRutaDeUsuario(path, USUARIOS_PATH)
+                                                        || esRutaDeUsuario(path, USUARIOS_ALIAS));
 
                         if (postRegistro || getUsuario) {
                                 return null;
@@ -144,8 +146,10 @@ public class SecurityConfig {
                                 .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/auth/login").permitAll()
-                                                .requestMatchers(HttpMethod.POST, USUARIOS_PATH).permitAll()
-                                                .requestMatchers(HttpMethod.GET, USUARIOS_PATH, USUARIOS_PATH + "/*")
+                                                .requestMatchers(HttpMethod.POST, USUARIOS_PATH, USUARIOS_ALIAS).permitAll()
+                                                .requestMatchers(HttpMethod.GET,
+                                                                USUARIOS_PATH, USUARIOS_PATH + "/*",
+                                                                USUARIOS_ALIAS, USUARIOS_ALIAS + "/*")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -155,8 +159,12 @@ public class SecurityConfig {
                 return http.build();
         }
 
-        private static boolean esRutaDeUsuario(String path) {
-                String prefix = USUARIOS_PATH + "/";
+        private static boolean esRutaDeUsuario(String path, String basePath) {
+                if (basePath.equals(path)) {
+                        return true;
+                }
+
+                String prefix = basePath + "/";
                 return path.startsWith(prefix)
                                 && path.length() > prefix.length()
                                 && path.indexOf('/', prefix.length()) == -1;

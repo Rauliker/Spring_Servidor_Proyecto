@@ -27,6 +27,14 @@ class SecurityConfigTest {
     }
 
     @Test
+    void postDeRegistroSinPrefijoApiIgnoraToken() {
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/usuarios");
+        request.addHeader("Authorization", "Bearer invalido");
+
+        assertNull(bearerTokenResolver.resolve(request));
+    }
+
+    @Test
     void getDeUsuariosIgnoraToken() {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/usuarios");
         request.addHeader("Authorization", "Bearer invalido");
@@ -37,6 +45,14 @@ class SecurityConfigTest {
     @Test
     void getDeUsuarioPorIdIgnoraToken() {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/usuarios/7");
+        request.addHeader("Authorization", "Bearer invalido");
+
+        assertNull(bearerTokenResolver.resolve(request));
+    }
+
+    @Test
+    void getPublicoSinPrefijoApiIgnoraToken() {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/usuarios");
         request.addHeader("Authorization", "Bearer invalido");
 
         assertNull(bearerTokenResolver.resolve(request));
