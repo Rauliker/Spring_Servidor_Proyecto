@@ -78,6 +78,16 @@ public class PisoServiceImpl implements PisoService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<PisoDTO> listarPorUsuario(Integer idUsuario) {
+        return miembrosPisosRepository.findByUsuario_IdUsuario(idUsuario.longValue())
+                .stream()
+                .map(MiembrosPiso::getPiso)
+                .map(mapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public PisoDTO buscarPorIdPiso(Integer IdPiso) {
         Piso piso = repository.buscarPorIdPisoSQL(IdPiso)
                 .orElseThrow(() -> new ResponseStatusException(

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.proyectoraul.demo.dto.PisoDTO;
@@ -56,5 +57,29 @@ class PisoServiceImplTest {
         assertSame(creador, miembro.getUsuario());
         assertSame(piso, miembro.getPiso());
         assertEquals(Role.ADMIN, miembro.getRol());
+    }
+
+    @Test
+    void listarPorUsuarioDevuelveSoloLosPisosDeSusInscripciones() {
+        PisoRepository pisoRepository = mock(PisoRepository.class);
+        PisoMapper mapper = mock(PisoMapper.class);
+        UsuarioRepository usuarioRepository = mock(UsuarioRepository.class);
+        MiembrosPisosRepository miembrosPisosRepository =
+                mock(MiembrosPisosRepository.class);
+        PisoServiceImpl service = new PisoServiceImpl(
+                pisoRepository, mapper, usuarioRepository, miembrosPisosRepository);
+        Piso piso = new Piso();
+        PisoDTO pisoDTO = new PisoDTO();
+        MiembrosPiso miembro = new MiembrosPiso(null, new Usuario(), piso, Role.MIEMBRO);
+
+        when(miembrosPisosRepository.findByUsuario_IdUsuario(7L))
+                .thenReturn(List.of(miembro));
+        when(mapper.toDTO(piso)).thenReturn(pisoDTO);
+
+        List<PisoDTO> pisos = service.listarPorUsuario(7);
+
+        assertEquals(1, pisos.size());
+        assertSame(pisoDTO, pisos.get(0));
+        verify(miembrosPisosRepository).findByUsuario_IdUsuario(7L);
     }
 }

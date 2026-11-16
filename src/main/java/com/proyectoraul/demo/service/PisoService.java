@@ -9,6 +9,8 @@ public interface PisoService {
 
     List<PisoDTO> listar();
 
+    List<PisoDTO> listarPorUsuario(Integer idUsuario);
+
     PisoDTO buscarPorIdPiso(Integer IdPiso);
 
     PisoDTO actualizar(Integer IdPiso, PisoDTO dto);

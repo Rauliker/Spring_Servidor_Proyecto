@@ -5,6 +5,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.proyectoraul.demo.auth.TokenService;
 import com.proyectoraul.demo.dto.DatosToken;
@@ -37,5 +39,24 @@ class PisoControllerTest {
         controller.crear(dto, jwt);
 
         verify(pisoService).crear(dto, 7);
+    }
+
+    @Test
+    void listarUsaElUsuarioDelTokenParaConsultarSusPisos() {
+        PisoService pisoService = mock(PisoService.class);
+        TokenService tokenService = mock(TokenService.class);
+        PisoController controller = new PisoController(pisoService, tokenService);
+        Jwt jwt = Jwt.withTokenValue("token-validado")
+                .header("alg", "HS256")
+                .subject("usuario")
+                .build();
+        List<PisoDTO> pisos = List.of(new PisoDTO());
+
+        when(tokenService.obtenerDatosToken("token-validado"))
+                .thenReturn(new DatosToken(7, "usuario", "usuario@example.com", "Usuario"));
+        when(pisoService.listarPorUsuario(7)).thenReturn(pisos);
+
+        assertEquals(pisos, controller.listar(jwt));
+        verify(pisoService).listarPorUsuario(7);
     }
 }
