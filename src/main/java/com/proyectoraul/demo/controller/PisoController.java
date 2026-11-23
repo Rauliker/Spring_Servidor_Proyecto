@@ -42,8 +42,9 @@ public class PisoController {
     }
 
     @GetMapping
-    public List<PisoDTO> listar() {
-        return service.listar();
+    public List<PisoDTO> listar(@AuthenticationPrincipal Jwt jwt) {
+        Integer idUsuario = tokenService.obtenerDatosToken(jwt.getTokenValue()).idUsuario();
+        return service.listarPorUsuario(idUsuario);
     }
 
     @GetMapping("/{IdPiso}")

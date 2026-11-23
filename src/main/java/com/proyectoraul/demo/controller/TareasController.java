@@ -22,7 +22,7 @@ import com.proyectoraul.demo.service.TareasService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/tareas")
+@RequestMapping({"/api/tareas", "/tareas"})
 public class TareasController {
 
     private final TareasService tareasService;

@@ -43,7 +43,7 @@ public class TokenService {
                                 .claim("email", email)
                                 .claim("nombre", nombre)
                                 .issuedAt(ahora)
-                                .expiresAt(ahora.plus(30, ChronoUnit.MINUTES))
+                                .expiresAt(ahora.plus(7, ChronoUnit.DAYS))
                                 .build();
 
                 JwsHeader header = JwsHeader

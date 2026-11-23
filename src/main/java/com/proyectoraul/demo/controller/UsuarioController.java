@@ -14,12 +14,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.proyectoraul.demo.dto.UsuarioDTO;
+import com.proyectoraul.demo.dto.UsuarioPublicoDTO;
 import com.proyectoraul.demo.service.UsuarioService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping({"/api/usuarios", "/usuarios"})
 public class UsuarioController {
     private final UsuarioService service;
 
@@ -34,13 +35,15 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public List<UsuarioDTO> listar() {
-        return service.listar();
+    public List<UsuarioPublicoDTO> listar() {
+        return service.listar().stream()
+                .map(UsuarioPublicoDTO::desde)
+                .toList();
     }
 
     @GetMapping("/{IdUsuario}")
-    public UsuarioDTO buscarPorIdUsuario(@PathVariable Integer IdUsuario) {
-        return service.buscarPorIdUsuario(IdUsuario);
+    public UsuarioPublicoDTO buscarPorIdUsuario(@PathVariable Integer IdUsuario) {
+        return UsuarioPublicoDTO.desde(service.buscarPorIdUsuario(IdUsuario));
     }
 
     @PutMapping("/{IdUsuario}")

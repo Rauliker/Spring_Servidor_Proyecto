@@ -1,5 +1,6 @@
 package com.proyectoraul.demo.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,6 +22,7 @@ public class UsuarioDTO {
     @Size(max = 150, message = "El email no puede superar 150 caracteres")
     private String email;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotNull(message = "La contraseña es obligatoria")
     @Size(min = 8, message = "Hay que poner una contraseña con el menos 8 caracteres")
     private String password;

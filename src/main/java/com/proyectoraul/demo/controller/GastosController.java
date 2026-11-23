@@ -22,7 +22,7 @@ import com.proyectoraul.demo.service.GastosService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/gastos")
+@RequestMapping({"/api/gastos", "/gastos"})
 public class GastosController {
 
     private final GastosService gastosService;
