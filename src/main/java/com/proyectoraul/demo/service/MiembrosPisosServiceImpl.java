@@ -13,8 +13,10 @@ import com.proyectoraul.demo.model.MiembrosPiso;
 import com.proyectoraul.demo.model.Piso;
 import com.proyectoraul.demo.model.Role;
 import com.proyectoraul.demo.model.Usuario;
+import com.proyectoraul.demo.repository.GastosRepository;
 import com.proyectoraul.demo.repository.MiembrosPisosRepository;
 import com.proyectoraul.demo.repository.PisoRepository;
+import com.proyectoraul.demo.repository.TareasRepository;
 import com.proyectoraul.demo.repository.UsuarioRepository;
 
 @Service
@@ -24,14 +26,20 @@ public class MiembrosPisosServiceImpl implements MiembrosPisosService {
     private final MiembrosPisosRepository miembrosRepository;
     private final UsuarioRepository usuarioRepository;
     private final PisoRepository pisoRepository;
+    private final GastosRepository gastosRepository;
+    private final TareasRepository tareasRepository;
 
     public MiembrosPisosServiceImpl(
             MiembrosPisosRepository miembrosRepository,
             UsuarioRepository usuarioRepository,
-            PisoRepository pisoRepository) {
+            PisoRepository pisoRepository,
+            GastosRepository gastosRepository,
+            TareasRepository tareasRepository) {
         this.miembrosRepository = miembrosRepository;
         this.usuarioRepository = usuarioRepository;
         this.pisoRepository = pisoRepository;
+        this.gastosRepository = gastosRepository;
+        this.tareasRepository = tareasRepository;
     }
 
     @Override
@@ -134,6 +142,10 @@ public class MiembrosPisosServiceImpl implements MiembrosPisosService {
                 .orElseThrow(() -> new RuntimeException(
                         "No existe la membresía con ID: " + id));
 
+        Integer idUsuario = miembro.getUsuario().getIdUsuario();
+        Integer idPiso = miembro.getPiso().getIdPiso();
+        gastosRepository.deleteRelacionadosConUsuarioEnPiso(idPiso, idUsuario);
+        tareasRepository.deleteRelacionadasConUsuarioEnPiso(idPiso, idUsuario);
         miembrosRepository.delete(miembro);
     }
 }

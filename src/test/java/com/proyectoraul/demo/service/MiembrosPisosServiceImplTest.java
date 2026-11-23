@@ -3,6 +3,7 @@ package com.proyectoraul.demo.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -13,20 +14,25 @@ import com.proyectoraul.demo.model.MiembrosPiso;
 import com.proyectoraul.demo.model.Piso;
 import com.proyectoraul.demo.model.Role;
 import com.proyectoraul.demo.model.Usuario;
+import com.proyectoraul.demo.repository.GastosRepository;
 import com.proyectoraul.demo.repository.MiembrosPisosRepository;
 import com.proyectoraul.demo.repository.PisoRepository;
+import com.proyectoraul.demo.repository.TareasRepository;
 import com.proyectoraul.demo.repository.UsuarioRepository;
 import org.junit.jupiter.api.Test;
 
 class MiembrosPisosServiceImplTest {
 
     @Test
-    void crearBuscaElPisoPorCodigoYAsociaElUsuarioDelToken() {
+    void crearAsignaMiembroCuandoElUsuarioNoEsCreadorYNoSeEnviaRol() {
         MiembrosPisosRepository miembrosRepository = mock(MiembrosPisosRepository.class);
         UsuarioRepository usuarioRepository = mock(UsuarioRepository.class);
         PisoRepository pisoRepository = mock(PisoRepository.class);
+        GastosRepository gastosRepository = mock(GastosRepository.class);
+        TareasRepository tareasRepository = mock(TareasRepository.class);
         MiembrosPisosServiceImpl service = new MiembrosPisosServiceImpl(
-                miembrosRepository, usuarioRepository, pisoRepository);
+                miembrosRepository, usuarioRepository, pisoRepository,
+                gastosRepository, tareasRepository);
         Usuario usuario = new Usuario();
         usuario.setIdUsuario(7);
         Usuario creador = new Usuario();
@@ -46,7 +52,7 @@ class MiembrosPisosServiceImplTest {
             return miembro;
         });
 
-        MiembrosPisosDTO creado = service.create(7, "codigo-piso", Role.ADMIN);
+        MiembrosPisosDTO creado = service.create(7, "codigo-piso", null);
 
         assertEquals(7L, creado.getIdUsuario());
         assertEquals(42L, creado.getIdPiso());
@@ -59,8 +65,11 @@ class MiembrosPisosServiceImplTest {
         MiembrosPisosRepository miembrosRepository = mock(MiembrosPisosRepository.class);
         UsuarioRepository usuarioRepository = mock(UsuarioRepository.class);
         PisoRepository pisoRepository = mock(PisoRepository.class);
+        GastosRepository gastosRepository = mock(GastosRepository.class);
+        TareasRepository tareasRepository = mock(TareasRepository.class);
         MiembrosPisosServiceImpl service = new MiembrosPisosServiceImpl(
-                miembrosRepository, usuarioRepository, pisoRepository);
+                miembrosRepository, usuarioRepository, pisoRepository,
+                gastosRepository, tareasRepository);
         Usuario usuario = new Usuario();
         usuario.setIdUsuario(7);
         Piso piso = new Piso();
@@ -81,5 +90,30 @@ class MiembrosPisosServiceImplTest {
         MiembrosPisosDTO creado = service.create(7, "codigo-piso", Role.MIEMBRO);
 
         assertEquals(Role.ADMIN, creado.getRol());
+    }
+
+    @Test
+    void eliminarMiembroBorraSusGastosYTareasSoloEnSuPisoAntesDeEliminarLaMembresia() {
+        MiembrosPisosRepository miembrosRepository = mock(MiembrosPisosRepository.class);
+        UsuarioRepository usuarioRepository = mock(UsuarioRepository.class);
+        PisoRepository pisoRepository = mock(PisoRepository.class);
+        GastosRepository gastosRepository = mock(GastosRepository.class);
+        TareasRepository tareasRepository = mock(TareasRepository.class);
+        MiembrosPisosServiceImpl service = new MiembrosPisosServiceImpl(
+                miembrosRepository, usuarioRepository, pisoRepository,
+                gastosRepository, tareasRepository);
+        Usuario usuario = new Usuario();
+        usuario.setIdUsuario(7);
+        Piso piso = new Piso();
+        piso.setIdPiso(42);
+        MiembrosPiso miembro = new MiembrosPiso(100L, usuario, piso, Role.MIEMBRO);
+        when(miembrosRepository.findById(100L)).thenReturn(Optional.of(miembro));
+
+        service.delete(100L);
+
+        var inOrder = inOrder(gastosRepository, tareasRepository, miembrosRepository);
+        inOrder.verify(gastosRepository).deleteRelacionadosConUsuarioEnPiso(42, 7);
+        inOrder.verify(tareasRepository).deleteRelacionadasConUsuarioEnPiso(42, 7);
+        inOrder.verify(miembrosRepository).delete(miembro);
     }
 }
